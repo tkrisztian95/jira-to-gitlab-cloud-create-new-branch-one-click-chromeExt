@@ -1,0 +1,7 @@
+{
+    "manifest_version": 2,
+    "name": "Jira to Gitlab - Open new branch",
+    "author": "Tóth Krisztián Gyula",
+    "version": "0.0.1",
+    "description": "Adds ability to create new branch on GitLab from the Jira issue view by clicking a button "
+}
