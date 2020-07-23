@@ -3,5 +3,29 @@
     "name": "Jira to Gitlab - Open new branch",
     "author": "Tóth Krisztián Gyula",
     "version": "0.0.1",
-    "description": "Adds ability to create new branch on GitLab from the Jira issue view by clicking a button "
+    "description": "Adds ability to create new branch on GitLab from the Jira issue view by clicking a button",
+    "content_scripts": [
+        {
+            "css": [
+                "src/style.css"
+            ],
+            "js": [
+                "src/content.js"
+            ],
+            "matches": [
+                "https://*.atlassian.net/browse/*"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        "src/data/*.html",
+        "/src/data/button.html"
+    ],
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+    "browser_action": {
+        "default_popup": "src/popup.html"
+    }
 }

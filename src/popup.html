@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Jira to Gitlab one click branch open</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Create branch on GitLab from Jira issue view">
+    <meta name="author" content="Tóth Krisztián Gyula">
+    <!-- Style Sheets -->
+    <link href="style.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+    <div class="form-style-2">
+        <form>
+            <label for="apikey">
+                <span>Access token:<span class="required">*</span></span>
+                <input id="apikey" class="input-field" type="text" name="apiKey" value="" />
+            </label>
+            <label><span id="display_message" style="display: none">Key saved!</span></label>
+            <label><span></span><input type="submit" value="Save" id="btnSetApiKey"></label>
+        </form>
+        <!-- Scripts -->
+        <script type="text/javascript" src="popup.js"></script>
+    </div>
+</body>
+
+</html>
