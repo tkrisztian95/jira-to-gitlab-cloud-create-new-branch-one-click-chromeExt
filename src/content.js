@@ -35,11 +35,25 @@ const getBranchFromGitlabAsync = async (issueId) => {
     const response = await fetch(encodeURI('https://gitlab.com/api/v4/projects/' + projectId + '/repository/branches?search=' + issueId), {
         method: 'GET',
         headers: {
-            'PRIVATE-TOKEN': ''
+            'PRIVATE-TOKEN': apiKey
         }
     });
     const myJson = await response.json(); //extract JSON from the http response
 
+    console.log(myJson);
+
+    return myJson;
+}
+
+const postBranchOnGitlabAsync = async (branchName) => {
+    console.log('Creating branch with name: "' + branchName + '"');
+    const response = await fetch(encodeURI('https://gitlab.com/api/v4/projects/' + projectId + '/repository/branches?branch=' + branchName + '&ref=master'), {
+        method: 'POST',
+        headers: {
+            'PRIVATE-TOKEN': apiKey
+        }
+    });
+    const myJson = await response.json(); //extract JSON from the http response
 
     console.log(myJson);
 
@@ -71,13 +85,37 @@ const getButtonInnerHTMLAsync = async () => {
     return buttonDoc.body.innerHTML;
 }
 
+function getIssueTitle() {
+    //TODO
+}
+
 function addButtonToIssueView() {
     getBranchFromGitlabAsync(issueId).then(branches => {
-        var buttonRow = document.querySelector('#helpPanelContainer > div > div.css-kyhvoj > div.css-e48442 > div.sc-lhVmIH.qZopO > div > div > div > div > div.sc-lfIlRe.blteI > div > div.sc-ktHwxA.dibHAR > div.sc-caSCKo.frDVEh > div > div.GridColumnElement__GridColumn-sc-57x38k-0.lnhCWP > div > div > div:nth-child(2) > div');
+        var $controlRow = $('#helpPanelContainer > div > div.css-kyhvoj > div.css-e48442 > div.sc-lhVmIH.qZopO > div > div > div > div > div.sc-lfIlRe.blteI > div > div.sc-ktHwxA.dibHAR > div.sc-caSCKo.frDVEh > div > div.GridColumnElement__GridColumn-sc-57x38k-0.lnhCWP > div > div > div:nth-child(2) > div');
         getButtonInnerHTMLAsync().then(buttonHTML => {
-            buttonRow.insertAdjacentHTML('beforeend', buttonHTML);
+            var $branchBtnContainer = $(buttonHTML);
+            var $branchBtn = $branchBtnContainer.find("button");
+
+            $branchBtnContainer.mouseover(async function (event) {
+                $branchBtn.attr('class', 'css-r3no7s');
+            });
+
+            $branchBtnContainer.mouseleave(async function (event) {
+                $branchBtn.attr('class', 'css-1hy2148');
+            });
+
+            $branchBtn.click(async function (event) {
+                var prefix = "task";
+                var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
+                var branchName = prefix + "/" + issueId + "-" + issueTitle;
+            });
+
+            $controlRow.append($branchBtnContainer);
         })
     });
 }
 
-addButtonToIssueView();
+$(document).ready(function () {
+    addButtonToIssueView();
+});
+
