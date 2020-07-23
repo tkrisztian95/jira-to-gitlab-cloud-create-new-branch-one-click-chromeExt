@@ -6,10 +6,12 @@
     "description": "Adds ability to create new branch on GitLab from the Jira issue view by clicking a button",
     "content_scripts": [
         {
+            "run_at": "document_end",
             "css": [
                 "src/style.css"
             ],
             "js": [
+                "src/libs/jquery-3.4.1.min.js",
                 "src/content.js"
             ],
             "matches": [
