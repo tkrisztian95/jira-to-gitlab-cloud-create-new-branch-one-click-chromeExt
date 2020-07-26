@@ -8,11 +8,11 @@
         {
             "run_at": "document_end",
             "css": [
-                "src/style.css"
+                "src/css/style.css"
             ],
             "js": [
-                "src/libs/jquery-3.4.1.min.js",
-                "src/content.js"
+                "libs/jquery-3.4.1.min.js",
+                "src/js/content_script.js"
             ],
             "matches": [
                 "https://*.atlassian.net/browse/*"
@@ -20,14 +20,14 @@
         }
     ],
     "web_accessible_resources": [
-        "src/data/*.html",
-        "/src/data/button.html"
+        "src/js/*",
+        "src/html/model/*"
     ],
     "permissions": [
         "storage",
         "tabs"
     ],
     "browser_action": {
-        "default_popup": "src/popup.html"
+        "default_popup": "src/html/popup.html"
     }
 }

@@ -1,7 +1,7 @@
-const LOCAL_STORAGE_API_KEY = "gitlab_apikey";
+import Request from './request.js';
+const request = Request.new({ token: '', projectId: '' });
 
-var apiKey = "";
-var projectId = "";
+const LOCAL_STORAGE_API_KEY = "gitlab_apikey";
 
 let url = location.href;
 console.log(url);
@@ -30,38 +30,8 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
 });
 
-const getBranchFromGitlabAsync = async (issueId) => {
-    console.log('Fetching branch of: "' + issueId + '"');
-    const response = await fetch(encodeURI('https://gitlab.com/api/v4/projects/' + projectId + '/repository/branches?search=' + issueId), {
-        method: 'GET',
-        headers: {
-            'PRIVATE-TOKEN': apiKey
-        }
-    });
-    const myJson = await response.json(); //extract JSON from the http response
-
-    console.log(myJson);
-
-    return myJson;
-}
-
-const postBranchOnGitlabAsync = async (branchName) => {
-    console.log('Creating branch with name: "' + branchName + '"');
-    const response = await fetch(encodeURI('https://gitlab.com/api/v4/projects/' + projectId + '/repository/branches?branch=' + branchName + '&ref=master'), {
-        method: 'POST',
-        headers: {
-            'PRIVATE-TOKEN': apiKey
-        }
-    });
-    const myJson = await response.json(); //extract JSON from the http response
-
-    console.log(myJson);
-
-    return myJson;
-}
-
 const getButtonInnerHTMLAsync = async () => {
-    const buttonDoc = await fetch(chrome.runtime.getURL("/src/data/button.html"))
+    const buttonDoc = await fetch(chrome.runtime.getURL("/src/html/model/button.html"))
         .then(function (response) {
             // When the page is loaded convert it to text
             return response.text()
@@ -76,7 +46,7 @@ const getButtonInnerHTMLAsync = async () => {
             // Example:
             // var docArticle = doc.querySelector('article').innerHTML;
 
-            // console.log(doc);
+            console.log(doc);
             return doc;
         })
         .catch(function (err) {
@@ -86,12 +56,15 @@ const getButtonInnerHTMLAsync = async () => {
 }
 
 function getIssueTitle() {
-    //TODO
+    return $("[data-test-id=\"issue.views.issue-base.foundation.summary.heading\"]").text();
 }
 
 function addButtonToIssueView() {
-    getBranchFromGitlabAsync(issueId).then(branches => {
-        var $controlRow = $('#helpPanelContainer > div > div.css-kyhvoj > div.css-e48442 > div.sc-lhVmIH.qZopO > div > div > div > div > div.sc-lfIlRe.blteI > div > div.sc-ktHwxA.dibHAR > div.sc-caSCKo.frDVEh > div > div.GridColumnElement__GridColumn-sc-57x38k-0.lnhCWP > div > div > div:nth-child(2) > div');
+    request.getBranchFromGitlabAsync(issueId).then(branches => {
+        var $controlRow = $('#helpPanelContainer > div > div.css-kyhvoj > div.css-e48442 > div.sc-hzDkRC.cJZhDw > div > div > div > div > div.sc-mLCjK.dvEKLH > div > div.sc-jDwBTQ.kLMxby > div.sc-gqjmRU.hNsKca > div > div.GridColumnElement__GridColumn-sc-57x38k-0.lnhCWP > div > div > div:nth-child(2) > div');
+        if (!$controlRow.length) {
+            console.log('Control row not found!');
+        }
         getButtonInnerHTMLAsync().then(buttonHTML => {
             var $branchBtnContainer = $(buttonHTML);
             var $branchBtn = $branchBtnContainer.find("button");
@@ -108,6 +81,7 @@ function addButtonToIssueView() {
                 var prefix = "task";
                 var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
                 var branchName = prefix + "/" + issueId + "-" + issueTitle;
+                console.log("click: " + branchName);
             });
 
             $controlRow.append($branchBtnContainer);
@@ -118,4 +92,12 @@ function addButtonToIssueView() {
 $(document).ready(function () {
     addButtonToIssueView();
 });
+
+export function main() {
+    console.log("main()");
+    console.log(
+        "Is chrome.runtime available here?",
+        typeof chrome.runtime.sendMessage == "function",
+    );
+}
 
