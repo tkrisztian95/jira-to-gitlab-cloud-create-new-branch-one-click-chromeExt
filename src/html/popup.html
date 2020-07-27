@@ -13,12 +13,19 @@
 <body>
     <div class="form-style-2">
         <form>
-            <label for="apikey">
-                <span>Access token:<span class="required">*</span></span>
-                <input id="apikey" class="input-field" type="text" name="apiKey" value="" />
+            <label for="token">
+                <span>Private token:<span class="required">*</span></span>
+                <input id="input_token" class="input-field" type="text" name="token" value="" />
             </label>
-            <label><span id="display_message" style="display: none">Key saved!</span></label>
-            <label><span></span><input type="submit" value="Save" id="btnSetApiKey"></label>
+            <label for="projectId">
+                <span>Project id:<span class="required">*</span></span>
+                <input id="input_projectId" class="input-field" type="text" name="projectId" value="" />
+            </label>
+            <label><span id="display_message" style="display: none">Settings saved!</span></label>
+            <label>
+                <span></span>
+                <input type="submit" value="Save" id="btnSave">
+            </label>
         </form>
         <!-- Scripts -->
         <script type="text/javascript" src="/src/js/popup.js"></script>

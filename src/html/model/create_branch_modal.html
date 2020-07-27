@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Example</title>
+    <!-- Scripts -->
+    <script src="/libs/jquery-3.4.1.min.js"></script>
+    <script src="/libs/bootstrap.min.js"></script>
+
+    <!-- Style Sheets -->
+    <link href="/libs/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Create branch on GitLab</h2>
+        <form>
+            <div class="form-group">
+                <label for="input_branchName">Branch name</label>
+                <input type="text" class="form-control" id="input_branchName" aria-describedby="nameHelp"
+                    placeholder="Enter name">
+                <small id="nameHelp" class="form-text text-muted">Branch will be created with the given name.</small>
+            </div>
+            <button id="ajaxSubmit" type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="/src/js/create_branch_modal.js"></script>
+</body>
+
+</html>
