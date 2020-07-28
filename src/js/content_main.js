@@ -3,8 +3,6 @@ const request = Request.new({ token: '', projectId: '' });
 
 const KEY = "gitlab_settings";
 
-
-
 chrome.storage.sync.get(KEY, function (result) {
     var settings = JSON.parse(result[KEY]);
     var token = settings.token;
@@ -27,8 +25,8 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
 });
 
-const getButtonInnerHTMLAsync = async () => {
-    const buttonDoc = await fetch(chrome.runtime.getURL("/src/html/model/button.html"))
+const getHTMLAsync = async (path) => {
+    const buttonDoc = await fetch(chrome.runtime.getURL(path))
         .then(function (response) {
             // When the page is loaded convert it to text
             return response.text()
@@ -62,12 +60,23 @@ function getIssueId() {
     return issueId;
 }
 
+function _x(STR_XPATH) {
+    var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
+    var xnodes = [];
+    var xres;
+    while (xres = xresult.iterateNext()) {
+        xnodes.push(xres);
+    }
+
+    return xnodes;
+}
+
 function addButtonToIssueView() {
-    var $controlRow = $('#helpPanelContainer > div > div.css-kyhvoj > div.css-e48442 > div.sc-hzDkRC.cJZhDw > div > div > div > div > div.sc-mLCjK.dvEKLH > div > div.sc-jDwBTQ.kLMxby > div.sc-gqjmRU.hNsKca > div > div.GridColumnElement__GridColumn-sc-57x38k-0.lnhCWP > div > div > div:nth-child(2) > div');
+    var $controlRow = $(_x('/html/body/div[1]/div/div/div[1]/div[3]/div[1]/div/div/div/div/div[3]/div/div[1]/div[1]/div/div[1]/div/div/div[2]/div'));
     if (!$controlRow.length) {
         console.log('Control row not found!');
     }
-    getButtonInnerHTMLAsync().then(buttonHTML => {
+    getHTMLAsync("/src/html/model/button.html").then(buttonHTML => {
         var $branchBtnContainer = $(buttonHTML);
         var $branchBtn = $branchBtnContainer.find("button");
 
@@ -89,6 +98,17 @@ function addButtonToIssueView() {
         });
 
         $controlRow.append($branchBtnContainer);
+    })
+}
+
+function addDevelopmentSectionToSidebar(){
+    var $footNote = $('div[data-test-id=\"issue.views.issue-base.context.context-items\"]');
+    if (!$footNote.length) {
+        console.log('Footnote row not found!');
+    }
+    getHTMLAsync("/src/html/model/development.html").then(devHTML => {
+        var $developmentContainer = $(devHTML);       
+        $footNote.after($developmentContainer);
     })
 }
 
@@ -129,6 +149,7 @@ window.addEventListener('cors_event', function (event) {
 
 $(document).ready(function () {
     addButtonToIssueView();
+    addDevelopmentSectionToSidebar();
 });
 
 chrome.runtime.onMessage.addListener(
@@ -138,6 +159,7 @@ chrome.runtime.onMessage.addListener(
         if (request.message === 'clicked_createNewBranch') {
             try {
                 console.log("Clicked create new branch button on dialog with branch name: '" + request.data.branch + "'");
+                //TODO: create request
             } catch (error) {
                 console.log(`Error! ${error}`);
             } finally {
