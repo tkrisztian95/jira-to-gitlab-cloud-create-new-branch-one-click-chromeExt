@@ -15,10 +15,7 @@ class Request {
                 'PRIVATE-TOKEN': this.token
             }
         });
-        const myJson = await response.json(); //extract JSON from the http response
-
-        console.log(myJson);
-
+        const myJson = await response.json();
         return myJson;
     }
 
@@ -30,10 +27,7 @@ class Request {
                 'PRIVATE-TOKEN': this.token
             }
         });
-        const myJson = await response.json(); //extract JSON from the http response
-
-        console.log(myJson);
-
+        const myJson = await response.json();
         return myJson;
     }
 

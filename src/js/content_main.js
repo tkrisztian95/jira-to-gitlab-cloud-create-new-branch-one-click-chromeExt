@@ -116,8 +116,8 @@ const showModal = (branchName) => {
     const modal = document.createElement("dialog");
     modal.setAttribute(
         "style", `
-    height:250px;
-    width: 450px;
+    height:300px;
+    width: 550px;
     border: none;
     top:150px;
     border-radius:20px;
@@ -125,8 +125,8 @@ const showModal = (branchName) => {
     position: fixed; box-shadow: 0px 12px 48px rgba(29, 5, 64, 0.32);
     `
     );
-    modal.innerHTML = `<iframe id="popup-content"; style="height:100%"></iframe>
-    <div style="position:absolute; top:0px; left:5px;">
+    modal.innerHTML = `<iframe id="popup-content"; style="height:100%" width="550"></iframe>
+    <div style="position:absolute; top:0px; top:3px; left:543px;">
     <button style="padding: 8px 12px; font-size: 16px; border: none; border-radius: 20px;">x</button>
     </div>`;
     document.body.appendChild(modal);
@@ -149,7 +149,7 @@ window.addEventListener('cors_event', function (event) {
 
 $(document).ready(function () {
     addButtonToIssueView();
-    addDevelopmentSectionToSidebar();
+   // addDevelopmentSectionToSidebar();
 });
 
 chrome.runtime.onMessage.addListener(
@@ -163,12 +163,11 @@ chrome.runtime.onMessage.addListener(
             } catch (error) {
                 console.log(`Error! ${error}`);
             } finally {
-               
+                const dialog = document.querySelector("dialog");
+                dialog.close();
             }
         }
     });
-
-
 
 export function main() {
     console.log("main()");

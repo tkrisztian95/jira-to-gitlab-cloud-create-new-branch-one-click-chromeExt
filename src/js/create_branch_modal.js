@@ -1,3 +1,4 @@
+
 function getParamValue(paramName) {
     var url = window.location.search.substring(1); //get rid of "?" in querystring
     var qArray = url.split('&'); //get key-value pairs
@@ -8,46 +9,20 @@ function getParamValue(paramName) {
     }
 }
 
-function postMessage() {
-    window.parent.postMessage(
-        {
-            event_id: 'my_cors_message',
-            data: {
-                v1: 'value1',
-                v2: 'value2'
-            }
-        },
-        "*" //or "www.parentpage.com"
-    );
-}
-
 function sendMessage(message, data) {
-
     var data = data || {};
-
     chrome.tabs.getSelected(null, function (tab) {
-
         if (!tab) return;
-
         chrome.tabs.sendMessage(tab.id, {
-
             message: message,
-
             data: data
-
         });
-
     });
-
 };
 
 $(document).ready(function () {
-
     $('#input_branchName').val(getParamValue("branch_name"));
-
     $("#ajaxSubmit").click(function () {
-        console.log("#ajaxSubmit");
-
         sendMessage("clicked_createNewBranch", { branch: $('#input_branchName').val() });
     });
 });  

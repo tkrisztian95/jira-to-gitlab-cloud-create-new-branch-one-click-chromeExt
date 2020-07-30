@@ -12,7 +12,6 @@ function save() {
     console.log('Saved', KEY, settings);
   });
   document.getElementById("display_message").style.display = '';
-  console.log("Config updated: " + JSON.stringify(jsonfile));
 }
 
 document.getElementById("btnSave").addEventListener("click", save);

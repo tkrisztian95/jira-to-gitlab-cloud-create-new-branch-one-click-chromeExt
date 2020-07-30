@@ -19,11 +19,6 @@
             ]
         }
     ],
-    "background": {
-        "scripts": [
-            "src/js/background.js"
-        ]
-    },
     "web_accessible_resources": [
         "src/js/*",
         "src/html/model/*",
