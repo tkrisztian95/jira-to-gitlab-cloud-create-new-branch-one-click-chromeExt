@@ -7,28 +7,22 @@ class Request {
         return new this(props.token, props.projectId);
     }
 
-    getBranchFromGitlabAsync = async (issueId) => {
-        console.log('Fetching branch of: "' + issueId + '"');
-        const response = await fetch(encodeURI(`https://gitlab.com/api/v4/projects/${this.projectId}/repository/branches?search=${issueId}`), {
+    searchBranch(search){
+        return fetch(encodeURI(`https://gitlab.com/api/v4/projects/${this.projectId}/repository/branches?search=${search}`), {
             method: 'GET',
             headers: {
                 'PRIVATE-TOKEN': this.token
             }
         });
-        const myJson = await response.json();
-        return myJson;
     }
 
-    postBranchOnGitlabAsync = async (branchName) => {
-        console.log('Creating branch with name: "' + branchName + '"');
-        const response = await fetch(encodeURI(`https://gitlab.com/api/v4/projects/${this.projectId}/repository/branches?branch=${branchName}&ref=master`), {
+     createNewBranch(name, from){
+        return fetch(encodeURI(`https://gitlab.com/api/v4/projects/${this.projectId}/repository/branches?branch=${name}&ref=${from}`), {
             method: 'POST',
             headers: {
                 'PRIVATE-TOKEN': this.token
             }
         });
-        const myJson = await response.json();
-        return myJson;
     }
 
 }

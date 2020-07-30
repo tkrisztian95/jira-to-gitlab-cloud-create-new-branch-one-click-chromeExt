@@ -23,6 +23,9 @@ function sendMessage(message, data) {
 $(document).ready(function () {
     $('#input_branchName').val(getParamValue("branch_name"));
     $("#ajaxSubmit").click(function () {
-        sendMessage("clicked_createNewBranch", { branch: $('#input_branchName').val() });
+        sendMessage("clicked_createNewBranch", {
+            branch: $('#input_branchName').val(),
+            branch_from: $('#input_branchFrom').val()
+        });
     });
 });  

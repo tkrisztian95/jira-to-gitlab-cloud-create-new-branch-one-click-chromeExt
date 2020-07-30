@@ -1,20 +1,23 @@
 import Request from './request.js';
-const request = Request.new({ token: '', projectId: '' });
 
 const KEY = "gitlab_settings";
+let token;
+let projectId;
+
 
 chrome.storage.sync.get(KEY, function (result) {
     var settings = JSON.parse(result[KEY]);
-    var token = settings.token;
-    var projectId = settings.projectId;
+    this.token = settings.token;
+    this.projectId = settings.projectId;
 });
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (var key in changes) {
         var storageChange = changes[key];
         if (key === KEY) {
-            console.log("Api key updated " + key + " " + storageChange);
-            apiKey = storageChange.newValue;
+            var settings = JSON.parse(storageChange.newValue);
+            this.token = settings.token;
+            this.projectId = settings.projectId;
         }
         console.log('Storage key "%s" in namespace "%s" changed. ' +
             'Old value was "%s", new value is "%s".',
@@ -41,7 +44,7 @@ const getHTMLAsync = async (path) => {
             // Example:
             // var docArticle = doc.querySelector('article').innerHTML;
 
-            console.log(doc);
+            //console.log(doc);
             return doc;
         })
         .catch(function (err) {
@@ -101,13 +104,13 @@ function addButtonToIssueView() {
     })
 }
 
-function addDevelopmentSectionToSidebar(){
+function addDevelopmentSectionToSidebar() {
     var $footNote = $('div[data-test-id=\"issue.views.issue-base.context.context-items\"]');
     if (!$footNote.length) {
         console.log('Footnote row not found!');
     }
     getHTMLAsync("/src/html/model/development.html").then(devHTML => {
-        var $developmentContainer = $(devHTML);       
+        var $developmentContainer = $(devHTML);
         $footNote.after($developmentContainer);
     })
 }
@@ -140,16 +143,8 @@ const showModal = (branchName) => {
     });
 }
 
-window.addEventListener('cors_event', function (event) {
-    console.log("Window event");
-    if (event.data.event_id === 'my_cors_message!') {
-        console.log(event.data.data);
-    }
-});
-
 $(document).ready(function () {
     addButtonToIssueView();
-   // addDevelopmentSectionToSidebar();
 });
 
 chrome.runtime.onMessage.addListener(
@@ -158,8 +153,21 @@ chrome.runtime.onMessage.addListener(
         // listen for messages sent from iframe
         if (request.message === 'clicked_createNewBranch') {
             try {
-                console.log("Clicked create new branch button on dialog with branch name: '" + request.data.branch + "'");
-                //TODO: create request
+                var name = request.data.branch;
+                var from = request.data.branch_from;
+                console.log("Clicked create new branch button on dialog with branch name: '" + name + "' and branch from '" + from + "'");
+                Request.new({ token: this.token, projectId: this.projectId }).createNewBranch(name, from).then((response) => {
+                    if (response.status === 201) {
+                        var r = confirm(`New branch created on GitLab with name \'${name}\'! \n Press 'Ok' for open it on new tab!`);
+                        if (r == true) {
+                            chrome.tabs.create({ url: response.json().web_url });
+                        } else {
+                            // "You pressed Cancel!";
+                        }
+                    } else if (response.status === 401) {
+                        alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
+                    }
+                });
             } catch (error) {
                 console.log(`Error! ${error}`);
             } finally {
@@ -169,11 +177,12 @@ chrome.runtime.onMessage.addListener(
         }
     });
 
+
 export function main() {
-    console.log("main()");
-    console.log(
-        "Is chrome.runtime available here?",
-        typeof chrome.runtime.sendMessage == "function",
-    );
+    //console.log("main()");
+    //console.log(
+    //    "Is chrome.runtime available here?",
+    //    typeof chrome.runtime.sendMessage == "function",
+    //);
 }
 
