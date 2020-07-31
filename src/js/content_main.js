@@ -1,14 +1,16 @@
 import Request from './request.js';
 
 const KEY = "gitlab_settings";
-let token;
-let projectId;
+var token;
+var projectId;
 
 
 chrome.storage.sync.get(KEY, function (result) {
-    var settings = JSON.parse(result[KEY]);
-    this.token = settings.token;
-    this.projectId = settings.projectId;
+    if (result[KEY] != null) {
+        var settings = JSON.parse(result[KEY]);
+        this.token = settings.token;
+        this.projectId = settings.projectId;
+    }
 });
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -18,6 +20,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             var settings = JSON.parse(storageChange.newValue);
             this.token = settings.token;
             this.projectId = settings.projectId;
+            console.log("Settings updated!")
         }
         console.log('Storage key "%s" in namespace "%s" changed. ' +
             'Old value was "%s", new value is "%s".',
@@ -94,9 +97,33 @@ function addButtonToIssueView() {
         $branchBtn.click(async function (event) {
             var issueId = getIssueId();
             var prefix = "task";
-            var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
-            var branchName = prefix + "/" + issueId + "-" + issueTitle;
-            showModal(branchName);
+
+            chrome.storage.sync.get(KEY, function (result) {
+                if (result[KEY] != null) {
+                    var settings = JSON.parse(result[KEY]);
+                    let token = settings.token;
+                    let projectId = settings.projectId;
+                    Request.new({ token: token, projectId: projectId }).searchBranch(issueId).then((response) => {
+                        if (response.status === 200) {
+                            return response.json();
+                        } else if (response.status === 401) {
+                            alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
+                        } else {
+                            alert("Error happened during fetching branches from GitLab!");
+                        }
+                        throw new Error(response.status);
+                    }).then((data) => {
+                        var branchesFoundWithIssueId = data.length;
+                        var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
+                        var sugestedBranchName = prefix + "/" + issueId + "-" + issueTitle;
+                        console.log("Branches found with issue id :" + branchesFoundWithIssueId);
+                        showModal(sugestedBranchName, branchesFoundWithIssueId);
+                    });
+                } else {
+                    alert("Please set the access token and project id first in the Chrome extension settings!");
+                }
+            });
+
         });
 
         $controlRow.append($branchBtnContainer);
@@ -114,7 +141,7 @@ function addDevelopmentSectionToSidebar() {
     })
 }
 
-const showModal = (branchName) => {
+const showModal = (branchName, branchesCount) => {
     const modal = document.createElement("dialog");
     modal.setAttribute(
         "style", `
@@ -135,7 +162,7 @@ const showModal = (branchName) => {
     const dialog = document.querySelector("dialog");
     dialog.showModal();
     const iframe = document.getElementById("popup-content");
-    iframe.src = chrome.extension.getURL("/src/html/model/create_branch_modal.html?branch_name=" + branchName);
+    iframe.src = chrome.extension.getURL("/src/html/model/create_branch_modal.html?branch_name=" + branchName + "&branch_count=" + branchesCount);
     iframe.frameBorder = 0;
     dialog.querySelector("button").addEventListener("click", () => {
         dialog.close();

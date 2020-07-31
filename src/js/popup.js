@@ -16,9 +16,11 @@ function save() {
 
 document.getElementById("btnSave").addEventListener("click", save);
 chrome.storage.sync.get(KEY, function (result) {
-  var obj = JSON.parse(result[KEY]);
-  document.getElementById('input_token').value = obj.token;
-  document.getElementById('input_projectId').value = obj.projectId;
+  if (result[KEY] != null) {
+    var obj = JSON.parse(result[KEY]);
+    document.getElementById('input_token').value = obj.token;
+    document.getElementById('input_projectId').value = obj.projectId;
+  }
 });
 
 window.addEventListener('click', function (e) {

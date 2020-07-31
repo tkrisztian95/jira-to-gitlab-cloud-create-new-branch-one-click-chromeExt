@@ -20,12 +20,23 @@ function sendMessage(message, data) {
     });
 };
 
+
 $(document).ready(function () {
+
+    $("#badge_branchesCount").popover({ trigger: "hover" });
+
     $('#input_branchName').val(getParamValue("branch_name"));
+    $('#badge_branchesCount').text(getParamValue("branch_count"));
     $("#ajaxSubmit").click(function () {
         sendMessage("clicked_createNewBranch", {
             branch: $('#input_branchName').val(),
             branch_from: $('#input_branchFrom').val()
         });
     });
+
+    $('#badge_branchesCount').mouseover(function () {
+        var divName = $(this).data("id");
+        $('#' + divName).fadeIn();
+    });
+
 });  

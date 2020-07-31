@@ -4,6 +4,7 @@
 <head>
     <title>Example</title>
     <!-- Scripts -->
+    <script src="/libs/popper.min.js"></script>
     <script src="/libs/jquery-3.4.1.min.js"></script>
     <script src="/libs/bootstrap.min.js"></script>
 
@@ -51,7 +52,13 @@
                         SHA</small>
                 </div>
             </div>
-            <button id="ajaxSubmit" type="submit" class="btn btn-primary">Create branch</button>
+            <button id="ajaxSubmit" type="submit" class="btn btn-primary" >Create
+                branch
+                <span id="badge_branchesCount" class="badge badge-light" data-trigger="hover" data-container="body"
+                data-placement="right" data-content="Branches count found by the Issue ID">0</span>
+                <span class="sr-only">Existing branches for the current issue id</span>
+            </button>
+
         </form>
     </div>
 
