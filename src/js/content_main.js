@@ -96,7 +96,6 @@ function addButtonToIssueView() {
             var prefix = "task";
             var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
             var branchName = prefix + "/" + issueId + "-" + issueTitle;
-            console.log("click: " + branchName);
             showModal(branchName);
         });
 
