@@ -36,6 +36,9 @@
             </span>
             <h2>New branch</h2>
         </div>
+        <div class="row">
+            <a href="#"><span style="transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out"
+                    id="badge_projectName"  class="badge badge-warning">Your project</span></a></div>
         <form>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input_branchName">Branch name</label>
@@ -52,11 +55,11 @@
                         SHA</small>
                 </div>
             </div>
-            <button id="ajaxSubmit" type="submit" class="btn btn-primary" >Create
+            <button id="ajaxSubmit" type="submit" class="btn btn-primary">Create
                 branch
                 <span id="badge_branchesCount" class="badge badge-light" data-trigger="hover" data-container="body"
-                data-placement="right" data-content="Branches count found by the Issue ID">0</span>
-                <span class="sr-only">Existing branches for the current issue id</span>
+                    data-placement="right" data-content="Branches count found by the Issue ID">0</span>
+                <span class="sr-only">Active branches count contains this issue id</span>
             </button>
 
         </form>

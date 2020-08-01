@@ -7,6 +7,15 @@ class Request {
         return new this(props.token, props.projectId);
     }
 
+    getProjectById(){
+        return fetch(encodeURI(`https://gitlab.com/api/v4/projects/${this.projectId}`), {
+            method: 'GET',
+            headers: {
+                'PRIVATE-TOKEN': this.token
+            }
+        });
+    }
+
     searchBranch(search){
         return fetch(encodeURI(`https://gitlab.com/api/v4/projects/${this.projectId}/repository/branches?search=${search}`), {
             method: 'GET',

@@ -103,22 +103,39 @@ function addButtonToIssueView() {
                     var settings = JSON.parse(result[KEY]);
                     let token = settings.token;
                     let projectId = settings.projectId;
-                    Request.new({ token: token, projectId: projectId }).searchBranch(issueId).then((response) => {
+
+                    Request.new({ token: token, projectId: projectId }).getProjectById(issueId).then((response) => {
                         if (response.status === 200) {
                             return response.json();
                         } else if (response.status === 401) {
-                            alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
+                            alert("GitLab access token is invalid! \nPlease check the Chrome extension settings!");
                         } else {
                             alert("Error happened during fetching branches from GitLab!");
                         }
                         throw new Error(response.status);
                     }).then((data) => {
-                        var branchesFoundWithIssueId = data.length;
-                        var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
-                        var sugestedBranchName = prefix + "/" + issueId + "-" + issueTitle;
-                        console.log("Branches found with issue id :" + branchesFoundWithIssueId);
-                        showModal(sugestedBranchName, branchesFoundWithIssueId);
+                        console.log(data);
+                        let project_name_with_namespace = data.name_with_namespace;
+                        let project_web_url = data.web_url;
+
+                        Request.new({ token: token, projectId: projectId }).searchBranch(issueId).then((response) => {
+                            if (response.status === 200) {
+                                return response.json();
+                            } else if (response.status === 401) {
+                                alert("Cannot create new branch, GitLab access token is invalid! \nPlease check the Chrome extension settings!");
+                            } else {
+                                alert("Error happened during fetching branches from GitLab!");
+                            }
+                            throw new Error(response.status);
+                        }).then((data) => {
+                            var branchesFoundWithIssueId = data.length;
+                            var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
+                            var sugestedBranchName = prefix + "/" + issueId + "-" + issueTitle;
+                            console.log("Branches found with issue id :" + branchesFoundWithIssueId);
+                            showModal(project_name_with_namespace, project_web_url, sugestedBranchName, branchesFoundWithIssueId);
+                        });
                     });
+
                 } else {
                     alert("Please set the access token and project id first in the Chrome extension settings!");
                 }
@@ -141,11 +158,11 @@ function addDevelopmentSectionToSidebar() {
     })
 }
 
-const showModal = (branchName, branchesCount) => {
+const showModal = (projectName, projectWebUrl, branchName, branchesCount) => {
     const modal = document.createElement("dialog");
     modal.setAttribute(
         "style", `
-    height:300px;
+    height:320px;
     width: 550px;
     border: none;
     top:150px;
@@ -162,7 +179,11 @@ const showModal = (branchName, branchesCount) => {
     const dialog = document.querySelector("dialog");
     dialog.showModal();
     const iframe = document.getElementById("popup-content");
-    iframe.src = chrome.extension.getURL("/src/html/model/create_branch_modal.html?branch_name=" + branchName + "&branch_count=" + branchesCount);
+    iframe.src = chrome.extension.getURL("/src/html/model/create_branch_modal.html?" +
+        "project_name_with_namespace=" + projectName +
+        "&project_web_url=" + projectWebUrl +
+        "&branch_name=" + branchName +
+        "&branch_count=" + branchesCount);
     iframe.frameBorder = 0;
     dialog.querySelector("button").addEventListener("click", () => {
         dialog.close();
@@ -200,6 +221,8 @@ chrome.runtime.onMessage.addListener(
                 const dialog = document.querySelector("dialog");
                 dialog.close();
             }
+        } else if (request.message === 'clicked_openProjectOnGitlab') {
+            window.open(request.data.web_url);
         }
     });
 
