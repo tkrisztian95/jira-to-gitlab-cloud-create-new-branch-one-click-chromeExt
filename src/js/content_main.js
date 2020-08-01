@@ -205,12 +205,7 @@ chrome.runtime.onMessage.addListener(
                 console.log("Clicked create new branch button on dialog with branch name: '" + name + "' and branch from '" + from + "'");
                 Request.new({ token: this.token, projectId: this.projectId }).createNewBranch(name, from).then((response) => {
                     if (response.status === 201) {
-                        var r = confirm(`New branch created on GitLab with name \'${name}\'! \n Press 'Ok' for open it on new tab!`);
-                        if (r == true) {
-                            chrome.tabs.create({ url: response.json().web_url });
-                        } else {
-                            // "You pressed Cancel!";
-                        }
+                        //TODO: Notfy branch created scuccessfully
                     } else if (response.status === 401) {
                         alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
                     }
