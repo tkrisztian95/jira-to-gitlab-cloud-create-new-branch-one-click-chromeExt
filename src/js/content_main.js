@@ -132,7 +132,7 @@ function addButtonToIssueView() {
                             var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
                             var sugestedBranchName = prefix + "/" + issueId + "-" + issueTitle;
                             console.log("Branches found with issue id :" + branchesFoundWithIssueId);
-                            showCreateBranchModal(project_name_with_namespace, project_web_url, sugestedBranchName, branchesFoundWithIssueId);
+                            openCreateBranchModal(project_name_with_namespace, project_web_url, sugestedBranchName, branchesFoundWithIssueId);
                         });
                     });
 
@@ -158,7 +158,7 @@ function addDevelopmentSectionToSidebar() {
     })
 }
 
-const showCreateBranchModal = (projectName, projectWebUrl, branchName, branchesCount) => {
+const openCreateBranchModal = (projectName, projectWebUrl, branchName, branchesCount) => {
     const modal = document.createElement("dialog");
     modal.setAttribute(
         "id", `modal_createBranch`);
@@ -192,8 +192,15 @@ const showCreateBranchModal = (projectName, projectWebUrl, branchName, branchesC
     });
 }
 
-const showBranchCreatedNotifModal = (branchName, webUrl) => {
-    console.log("showBranchCreatedNotifModal:" + branchName + "_" + webUrl)
+function closeCreateBranchModal() {
+    const dialog = document.getElementById("modal_createBranch");
+    if (dialog) {
+        dialog.close();
+    }
+}
+
+const openSuccessNotifModal = (branchName, webUrl) => {
+    console.log("openSuccessNotifModal:" + branchName + "_" + webUrl)
     const modal = document.createElement("dialog");
     modal.setAttribute(
         "id", `modal_branchCreateSuccessNotif`);
@@ -228,13 +235,19 @@ const showBranchCreatedNotifModal = (branchName, webUrl) => {
     });
 }
 
+function closeSuccessNotifModal() {
+    const dialog = document.getElementById("modal_branchCreateSuccessNotif");
+    if (dialog) {
+        dialog.close();
+    }
+}
+
 $(document).ready(function () {
     addButtonToIssueView();
 });
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log("Message listener:" + request)
         // listen for messages sent from iframe
         if (request.message === 'clicked_createNewBranch') {
             try {
@@ -248,28 +261,22 @@ chrome.runtime.onMessage.addListener(
                         alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
                     }
                 }).then((data) => {
-                    const dialog = document.getElementById("modal_createBranch");
-                    if (dialog) {
-                        dialog.close();
-                    }
-                    showBranchCreatedNotifModal(data.name, data.web_url);
+                    closeCreateBranchModal();
+                    openSuccessNotifModal(data.name, data.web_url);
+                    setTimeout(function () {
+                        closeSuccessNotifModal();
+                    }, 4000);
                 });
             } catch (error) {
                 console.log(`Error! ${error}`);
             } finally {
-                const dialog = document.getElementById("modal_createBranch");
-                if (dialog) {
-                    dialog.close();
-                }
+                closeCreateBranchModal();
             }
         } else if (request.message === 'clicked_openProjectOnGitlab') {
             window.open(request.data.web_url);
         }
         else if (request.message === 'clicked_openBranchOnGitlab') {
-            const dialog = document.getElementById("modal_branchCreateSuccessNotif");
-            if (dialog) {
-                dialog.close();
-            }
+            closeSuccessNotifModal();
             window.open(request.data.web_url);
         }
     });
