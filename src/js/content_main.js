@@ -85,7 +85,7 @@ function _x(STR_XPATH) {
 }
 
 function addButtonToIssueView() {
-    var $controlRow = $(_x('/html/body/div[1]/div/div/div[1]/div[3]/div[1]/div/div/div/div/div[3]/div/div[1]/div[1]/div/div[1]/div/div/div[2]/div'));
+    var $controlRow = $(_x("//*[@data-test-id='issue.views.issue-details.issue-layout.left-most-column']/div[2]/div"));
     if (!$controlRow.length) {
         log('Control row not found!');
     }
@@ -150,7 +150,7 @@ function addButtonToIssueView() {
 
         });
 
-        $controlRow.append($branchBtnContainer);
+        $controlRow.prepend($branchBtnContainer);
     })
 }
 
