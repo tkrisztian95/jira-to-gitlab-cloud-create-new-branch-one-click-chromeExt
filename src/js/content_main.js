@@ -132,7 +132,7 @@ function addButtonToIssueView() {
                             var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
                             var sugestedBranchName = prefix + "/" + issueId + "-" + issueTitle;
                             console.log("Branches found with issue id :" + branchesFoundWithIssueId);
-                            showModal(project_name_with_namespace, project_web_url, sugestedBranchName, branchesFoundWithIssueId);
+                            showCreateBranchModal(project_name_with_namespace, project_web_url, sugestedBranchName, branchesFoundWithIssueId);
                         });
                     });
 
@@ -158,8 +158,10 @@ function addDevelopmentSectionToSidebar() {
     })
 }
 
-const showModal = (projectName, projectWebUrl, branchName, branchesCount) => {
+const showCreateBranchModal = (projectName, projectWebUrl, branchName, branchesCount) => {
     const modal = document.createElement("dialog");
+    modal.setAttribute(
+        "id", `modal_createBranch`);
     modal.setAttribute(
         "style", `
     height:320px;
@@ -171,19 +173,55 @@ const showModal = (projectName, projectWebUrl, branchName, branchesCount) => {
     position: fixed; box-shadow: 0px 12px 48px rgba(29, 5, 64, 0.32);
     `
     );
-    modal.innerHTML = `<iframe id="popup-content"; style="height:100%" width="550"></iframe>
+    modal.innerHTML = `<iframe id="popup-content-create"; style="height:100%" width="550"></iframe>
     <div style="position:absolute; top:0px; top:3px; left:543px;">
     <button style="padding: 8px 12px; font-size: 16px; border: none; border-radius: 20px;">x</button>
     </div>`;
     document.body.appendChild(modal);
-    const dialog = document.querySelector("dialog");
+    const dialog = document.getElementById("modal_createBranch");
     dialog.showModal();
-    const iframe = document.getElementById("popup-content");
+    const iframe = document.getElementById("popup-content-create");
     iframe.src = chrome.extension.getURL("/src/html/model/create_branch_modal.html?" +
         "project_name_with_namespace=" + projectName +
         "&project_web_url=" + projectWebUrl +
         "&branch_name=" + branchName +
         "&branch_count=" + branchesCount);
+    iframe.frameBorder = 0;
+    dialog.querySelector("button").addEventListener("click", () => {
+        dialog.close();
+    });
+}
+
+const showBranchCreatedNotifModal = (branchName, webUrl) => {
+    console.log("showBranchCreatedNotifModal:" + branchName + "_" + webUrl)
+    const modal = document.createElement("dialog");
+    modal.setAttribute(
+        "id", `modal_branchCreateSuccessNotif`);
+    modal.setAttribute(
+        "style", `
+    height:49px;
+    width: 548px;
+    border: none;
+    top:60px;
+    border-radius:20px;
+    background-color:white;
+    position: fixed; box-shadow: 0px 12px 48px rgba(29, 5, 64, 0.32);
+    padding: inherit;
+    overflow: hidden;
+    `
+    );
+    modal.innerHTML = `<iframe id="popup-content-notif"; style="height:100%" width="550"></iframe>
+    <div style="position:absolute; top:0px; top:5px; left:515px;">
+    <button style="padding: 8px 12px; font-size: 16px; border: none; border-radius: 20px;">x</button>
+    </div>`;
+    document.body.appendChild(modal);
+    const dialog = document.getElementById("modal_branchCreateSuccessNotif");
+    dialog.showModal();
+    const iframe = document.getElementById("popup-content-notif");
+    iframe.src = chrome.extension.getURL("/src/html/model/branch_created_modal.html?" +
+        "branch_name=" + branchName +
+        "&web_url=" + webUrl
+    );
     iframe.frameBorder = 0;
     dialog.querySelector("button").addEventListener("click", () => {
         dialog.close();
@@ -205,18 +243,33 @@ chrome.runtime.onMessage.addListener(
                 console.log("Clicked create new branch button on dialog with branch name: '" + name + "' and branch from '" + from + "'");
                 Request.new({ token: this.token, projectId: this.projectId }).createNewBranch(name, from).then((response) => {
                     if (response.status === 201) {
-                        //TODO: Notfy branch created scuccessfully
+                        return response.json();
                     } else if (response.status === 401) {
                         alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
                     }
+                }).then((data) => {
+                    const dialog = document.getElementById("modal_createBranch");
+                    if (dialog) {
+                        dialog.close();
+                    }
+                    showBranchCreatedNotifModal(data.name, data.web_url);
                 });
             } catch (error) {
                 console.log(`Error! ${error}`);
             } finally {
-                const dialog = document.querySelector("dialog");
-                dialog.close();
+                const dialog = document.getElementById("modal_createBranch");
+                if (dialog) {
+                    dialog.close();
+                }
             }
         } else if (request.message === 'clicked_openProjectOnGitlab') {
+            window.open(request.data.web_url);
+        }
+        else if (request.message === 'clicked_openBranchOnGitlab') {
+            const dialog = document.getElementById("modal_branchCreateSuccessNotif");
+            if (dialog) {
+                dialog.close();
+            }
             window.open(request.data.web_url);
         }
     });
