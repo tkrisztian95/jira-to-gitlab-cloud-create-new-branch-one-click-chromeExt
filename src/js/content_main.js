@@ -3,6 +3,13 @@ import Request from './request.js';
 const KEY = "gitlab_settings";
 var token;
 var projectId;
+var debug = false;
+
+function log(message) {
+    if (debug) {
+        console.log(message);
+    }
+}
 
 
 chrome.storage.sync.get(KEY, function (result) {
@@ -20,9 +27,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             var settings = JSON.parse(storageChange.newValue);
             this.token = settings.token;
             this.projectId = settings.projectId;
-            console.log("Settings updated!")
+            log("Settings updated!")
         }
-        console.log('Storage key "%s" in namespace "%s" changed. ' +
+        log('Storage key "%s" in namespace "%s" changed. ' +
             'Old value was "%s", new value is "%s".',
             key,
             namespace,
@@ -51,7 +58,7 @@ const getHTMLAsync = async (path) => {
             return doc;
         })
         .catch(function (err) {
-            console.log('Failed to fetch page: ', err);
+            log('Failed to fetch page: ', err);
         });
     return buttonDoc.body.innerHTML;
 }
@@ -80,9 +87,9 @@ function _x(STR_XPATH) {
 function addButtonToIssueView() {
     var $controlRow = $(_x('/html/body/div[1]/div/div/div[1]/div[3]/div[1]/div/div/div/div/div[3]/div/div[1]/div[1]/div/div[1]/div/div/div[2]/div'));
     if (!$controlRow.length) {
-        console.log('Control row not found!');
+        log('Control row not found!');
     }
-    getHTMLAsync("/src/html/model/button.html").then(buttonHTML => {
+    getHTMLAsync("/src/html/button.html").then(buttonHTML => {
         var $branchBtnContainer = $(buttonHTML);
         var $branchBtn = $branchBtnContainer.find("button");
 
@@ -114,7 +121,7 @@ function addButtonToIssueView() {
                         }
                         throw new Error(response.status);
                     }).then((data) => {
-                        console.log(data);
+                        log(data);
                         let project_name_with_namespace = data.name_with_namespace;
                         let project_web_url = data.web_url;
 
@@ -131,7 +138,7 @@ function addButtonToIssueView() {
                             var branchesFoundWithIssueId = data.length;
                             var issueTitle = getIssueTitle().toLowerCase().replace(/ /g, "_");
                             var sugestedBranchName = prefix + "/" + issueId + "-" + issueTitle;
-                            console.log("Branches found with issue id :" + branchesFoundWithIssueId);
+                            log("Branches found with issue id :" + branchesFoundWithIssueId);
                             openCreateBranchModal(project_name_with_namespace, project_web_url, sugestedBranchName, branchesFoundWithIssueId);
                         });
                     });
@@ -150,9 +157,9 @@ function addButtonToIssueView() {
 function addDevelopmentSectionToSidebar() {
     var $footNote = $('div[data-test-id=\"issue.views.issue-base.context.context-items\"]');
     if (!$footNote.length) {
-        console.log('Footnote row not found!');
+        log('Footnote row not found!');
     }
-    getHTMLAsync("/src/html/model/development.html").then(devHTML => {
+    getHTMLAsync("/src/html/development.html").then(devHTML => {
         var $developmentContainer = $(devHTML);
         $footNote.after($developmentContainer);
     })
@@ -181,7 +188,7 @@ const openCreateBranchModal = (projectName, projectWebUrl, branchName, branchesC
     const dialog = document.getElementById("modal_createBranch");
     dialog.showModal();
     const iframe = document.getElementById("popup-content-create");
-    iframe.src = chrome.extension.getURL("/src/html/model/create_branch_modal.html?" +
+    iframe.src = chrome.extension.getURL("/src/html/create_branch_modal.html?" +
         "project_name_with_namespace=" + projectName +
         "&project_web_url=" + projectWebUrl +
         "&branch_name=" + branchName +
@@ -200,7 +207,7 @@ function closeCreateBranchModal() {
 }
 
 const openSuccessNotifModal = (branchName, webUrl) => {
-    console.log("openSuccessNotifModal:" + branchName + "_" + webUrl)
+    log("openSuccessNotifModal:" + branchName + "_" + webUrl)
     const modal = document.createElement("dialog");
     modal.setAttribute(
         "id", `modal_branchCreateSuccessNotif`);
@@ -225,7 +232,7 @@ const openSuccessNotifModal = (branchName, webUrl) => {
     const dialog = document.getElementById("modal_branchCreateSuccessNotif");
     dialog.showModal();
     const iframe = document.getElementById("popup-content-notif");
-    iframe.src = chrome.extension.getURL("/src/html/model/branch_created_modal.html?" +
+    iframe.src = chrome.extension.getURL("/src/html/branch_created_modal.html?" +
         "branch_name=" + branchName +
         "&web_url=" + webUrl
     );
@@ -253,12 +260,14 @@ chrome.runtime.onMessage.addListener(
             try {
                 var name = request.data.branch;
                 var from = request.data.branch_from;
-                console.log("Clicked create new branch button on dialog with branch name: '" + name + "' and branch from '" + from + "'");
+                log("Clicked create new branch button on dialog with branch name: '" + name + "' and branch from '" + from + "'");
                 Request.new({ token: this.token, projectId: this.projectId }).createNewBranch(name, from).then((response) => {
                     if (response.status === 201) {
                         return response.json();
                     } else if (response.status === 401) {
                         alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
+                    } else {
+                        throw new Error(response.status);
                     }
                 }).then((data) => {
                     closeCreateBranchModal();
@@ -268,7 +277,7 @@ chrome.runtime.onMessage.addListener(
                     }, 4000);
                 });
             } catch (error) {
-                console.log(`Error! ${error}`);
+                log(`Error! ${error}`);
             } finally {
                 closeCreateBranchModal();
             }

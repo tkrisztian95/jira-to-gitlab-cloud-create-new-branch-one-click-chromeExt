@@ -5,16 +5,16 @@
     "version": "0.0.1",
     "description": "Adds ability to create new branch on GitLab from the Jira issue view by clicking a button",
     "icons": {
-        "16": "src/resources/icon16.png",
-        "32": "src/resources/icon32.png",
-        "48": "src/resources/icon48.png",
-        "128": "src/resources/icon128.png"
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
     },
     "content_scripts": [
         {
             "run_at": "document_end",
             "css": [
-                "src/css/style.css"
+                "src/css/popup.css"
             ],
             "js": [
                 "libs/jquery-3.4.1.min.js",
@@ -27,7 +27,7 @@
     ],
     "web_accessible_resources": [
         "src/js/*",
-        "src/html/model/*",
+        "src/html/*",
         "libs/*"
     ],
     "permissions": [
