@@ -23,8 +23,6 @@ function sendMessage(message, data) {
 
 chrome.runtime.onMessage.addListener(
     function (message, sender, sendResponse) {
-        console.log("Message in iframe");
-        console.log(message);
         if (message.createBranchResponse != null) {
             if (message.createBranchResponse.message != null) {
                 if (message.createBranchResponse.message == "Branch already exists") {

@@ -9,7 +9,7 @@ function save() {
   var jsonfile = {};
   jsonfile[KEY] = settings;
   chrome.storage.sync.set(jsonfile, function () {
-    console.log('Saved', KEY, settings);
+    // console.log('Saved', KEY, settings);
   });
   document.getElementById("display_message").style.display = '';
 }
