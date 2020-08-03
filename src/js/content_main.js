@@ -1,4 +1,5 @@
 import Request from './request.js';
+import { _x, getHTMLAsync } from './utils.js'
 
 const KEY = "gitlab_settings";
 var token;
@@ -10,7 +11,6 @@ function log(message) {
         console.log(message);
     }
 }
-
 
 chrome.storage.sync.get(KEY, function (result) {
     if (result[KEY] != null) {
@@ -38,31 +38,6 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
 });
 
-const getHTMLAsync = async (path) => {
-    const buttonDoc = await fetch(chrome.runtime.getURL(path))
-        .then(function (response) {
-            // When the page is loaded convert it to text
-            return response.text()
-        }).then(function (html) {
-            // Initialize the DOM parser
-            var parser = new DOMParser();
-
-            // Parse the text
-            var doc = parser.parseFromString(html, "text/html");
-
-            // You can now even select part of that html as you would in the regular DOM 
-            // Example:
-            // var docArticle = doc.querySelector('article').innerHTML;
-
-            //console.log(doc);
-            return doc;
-        })
-        .catch(function (err) {
-            log('Failed to fetch page: ', err);
-        });
-    return buttonDoc.body.innerHTML;
-}
-
 function getIssueTitle() {
     return $("[data-test-id=\"issue.views.issue-base.foundation.summary.heading\"]").text();
 }
@@ -71,17 +46,6 @@ function getIssueId() {
     var url = location.href;
     var issueId = url.split('/').pop();
     return issueId;
-}
-
-function _x(STR_XPATH) {
-    var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
-    var xnodes = [];
-    var xres;
-    while (xres = xresult.iterateNext()) {
-        xnodes.push(xres);
-    }
-
-    return xnodes;
 }
 
 function addButtonToIssueView() {
@@ -171,7 +135,7 @@ const openCreateBranchModal = (projectName, projectWebUrl, branchName, branchesC
         "id", `modal_createBranch`);
     modal.setAttribute(
         "style", `
-    height:320px;
+    height:350px;
     width: 550px;
     border: none;
     top:150px;
@@ -197,6 +161,7 @@ const openCreateBranchModal = (projectName, projectWebUrl, branchName, branchesC
     dialog.querySelector("button").addEventListener("click", () => {
         dialog.close();
     });
+    return modal;
 }
 
 function closeCreateBranchModal() {
@@ -240,6 +205,7 @@ const openSuccessNotifModal = (branchName, webUrl) => {
     dialog.querySelector("button").addEventListener("click", () => {
         dialog.close();
     });
+    return modal;
 }
 
 function closeSuccessNotifModal() {
@@ -264,22 +230,29 @@ chrome.runtime.onMessage.addListener(
                 Request.new({ token: this.token, projectId: this.projectId }).createNewBranch(name, from).then((response) => {
                     if (response.status === 201) {
                         return response.json();
+                    } else if (response.status === 400) {
+                        response.json().then(data => {
+                            chrome.runtime.sendMessage(
+                                { createBranchResponse: data });
+                        });
                     } else if (response.status === 401) {
                         alert("Cannot create new branch, GitLab private token is invalid! \nPlease check the Chrome extension settings!");
                     } else {
                         throw new Error(response.status);
                     }
                 }).then((data) => {
-                    closeCreateBranchModal();
-                    openSuccessNotifModal(data.name, data.web_url);
-                    setTimeout(function () {
-                        closeSuccessNotifModal();
-                    }, 4000);
+                    if (data != null) {
+                        closeCreateBranchModal();
+                        openSuccessNotifModal(data.name, data.web_url);
+                        setTimeout(function () {
+                            closeSuccessNotifModal();
+                        }, 4000);
+                    }
                 });
             } catch (error) {
                 log(`Error! ${error}`);
             } finally {
-                closeCreateBranchModal();
+               // closeCreateBranchModal();
             }
         } else if (request.message === 'clicked_openProjectOnGitlab') {
             window.open(request.data.web_url);

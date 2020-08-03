@@ -37,32 +37,38 @@
             <h2>New branch</h2>
         </div>
         <div class="row">
-            <a href="#"><span style="transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out"
-                    id="badge_projectName"  class="badge badge-warning">Your project</span></a></div>
+            <a href="#"><span
+                    style="transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out"
+                    id="badge_projectName" class="badge badge-warning">Your project</span></a></div>
         <form>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input_branchName">Branch name</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="input_branchName" placeholder="Enter name">
+                    <input type="text" class="form-control" id="input_branchName" placeholder="Enter name" required>
+                    <div id="invalidFeedback_branchName" class="invalid-feedback">
+                        Invalid branch name
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input_branchFrom">Create from</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" id="input_branchFrom" aria-describedby="createFromHelp"
-                        placeholder="From" value="master">
+                        placeholder="From" value="master" required>
                     <small id="createFromHelp" class="form-text text-muted">Existing branch name, tag, or commit
                         SHA</small>
+                    <div id="invalidFeedback_branchFrom" class="invalid-feedback">
+                        Invalid ref
+                    </div>
                 </div>
             </div>
-            <button id="ajaxSubmit" type="submit" class="btn btn-primary">Create
-                branch
-                <span id="badge_branchesCount" class="badge badge-light" data-trigger="hover" data-container="body"
-                    data-placement="right" data-content="Active branches with this issue id">0</span>
-                <span class="sr-only">Active branches with this issue id</span>
-            </button>
-
         </form>
+        <button id="ajaxSubmit" class="btn btn-primary">Create
+            branch
+            <span id="badge_branchesCount" class="badge badge-light" data-trigger="hover" data-container="body"
+                data-placement="right" data-content="Active branches with this issue id">0</span>
+            <span class="sr-only">Active branches with this issue id</span>
+        </button>
     </div>
 
     <script type="text/javascript" src="/src/js/create_branch_modal.js"></script>
