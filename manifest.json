@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "name": "Jira Gitlab integration - Create new branch button",
+    "name": "Jira Gitlab integration - New branch button",
     "author": "Tóth Krisztián Gyula",
     "version": "0.0.1",
     "description": "Adds ability to create new branch on GitLab directly from the Jira issue overview by clicking a button",
