@@ -4,7 +4,7 @@ The extension adds a new `Create branch` button to the Jira Issue overview contr
 ![Screenshot1](screenshots/Capture9.PNG)
 
 ## Description
-The extension makes it easier to create new branches on GitLab directly from Jira. Adds a new button to the issue overview page. After clicking this button a modal appears. On this modal you can specifiy the desired name for the new branch and the refence where it will be created from. You can also see the GitLab project where it will be created. Currently only one project/repo supported. 
+The extension makes it easier to create new branches on GitLab directly from Jira. Adds a new button to the issue overview page. After clicking this button a modal appears. On this modal you can specifiy the desired name for the new branch and the refence where it will be created from. You can also always notice the GitLab project where it will be created under. Currently only one project/repo supported. 
 For perfoming the create branch action the extension uses the GitLab API endpoints. See the [GitLab API docs](https://docs.gitlab.com/ee/api/)!
 If the branch created successfully then a success notif should popup. If something went wrong you will see browser alerts.
 
