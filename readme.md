@@ -24,7 +24,8 @@ The project id can be found on the project`s overview page on GitLab.
 
 ![Screenshot5](screenshots/Capture10.PNG)
 
-After you have saved the settings the extension is ready to use.
+3. Save
+Don't foget to click the ´Save´ button. After you have saved the values the extension is ready to use.
 
 ## Screenshots
 ### Create branch modal
