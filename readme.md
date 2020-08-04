@@ -1,5 +1,5 @@
 # Jira & GitLab integration - Create new branch from Issue
-The extension adds a new `Create branch` button to the Jira Issue overview control buttons under the issue title. If you wish to open new branches for your ticket easly without you have to navigate to you GitLab project this extension could help.
+The extension adds a new `Create branch` button to the Jira Issue overview control buttons under the issue title. If you wish to open new branches for your ticket you1ve just started working on, this extension could help.
 
 //TODO: Here comes the chromeStore link
 
@@ -10,6 +10,8 @@ The extension makes it easier to create new branches on GitLab directly from Jir
 
 ### How to configure
 To reveal the extension settings simply click on the extension icon in the extensions toolbar. On the popup you have to set the access token and the project id from GitLab.
+
+![Screenshot4](screenshots/Capture7.png)
 
 #### 1. Generate access token
 In order to get access to the GitLab APIs you must create an access token first in your profile with allowing the api usage (only). Then you should copy the generated key.
