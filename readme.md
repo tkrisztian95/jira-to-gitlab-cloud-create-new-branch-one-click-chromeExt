@@ -10,14 +10,14 @@ The extension makes it easier to create new new branches on GitLab directly from
 
 ### How to configure
 To reveal the extension settings simply click on the extension icon in the extensions toolbar.
-![Screenshot](screenshots/Capture6.PNG)
+![Screenshot](screenshots/Capture6.png)
 
 On the popup you also have to specify one of your GitLab project ID.
-![Screenshot](screenshots/Capture7.PNG)
+![Screenshot](screenshots/Capture7.png)
 
 In order to get access to the GitLab APIs you must create an access token in your profile with allowing the api usage (only). Then you should copy the key and set it in the extension.
 
-![Screenshot](screenshots/Capture11.PNG)
+![Screenshot](screenshots/Capture11.png)
 
 The project id is visible on the project`s overview page on GitLab. After you have saved the settings the extension is ready to use.
 
@@ -25,7 +25,7 @@ The project id is visible on the project`s overview page on GitLab. After you ha
 
 ## Screenshots
 
-![Screenshot](screenshots/Capture1.PNG)
+![Screenshot](screenshots/capture1.PNG)
 ![Screenshot](screenshots/Capture2.PNG)
 ![Screenshot](screenshots/Capture4.PNG)
 
