@@ -152,7 +152,7 @@ const openCreateBranchModal = (projectName, projectWebUrl, branchName, branchesC
     const dialog = document.getElementById("modal_createBranch");
     dialog.showModal();
     const iframe = document.getElementById("popup-content-create");
-    iframe.src = chrome.extension.getURL("/src/html/create_branch_modal.html?" +
+    iframe.src = chrome.extension.getURL("/src/html/createModal.html?" +
         "project_name_with_namespace=" + projectName +
         "&project_web_url=" + projectWebUrl +
         "&branch_name=" + branchName +
@@ -197,7 +197,7 @@ const openSuccessNotifModal = (branchName, webUrl) => {
     const dialog = document.getElementById("modal_branchCreateSuccessNotif");
     dialog.showModal();
     const iframe = document.getElementById("popup-content-notif");
-    iframe.src = chrome.extension.getURL("/src/html/branch_created_modal.html?" +
+    iframe.src = chrome.extension.getURL("/src/html/successModal.html?" +
         "branch_name=" + branchName +
         "&web_url=" + webUrl
     );
