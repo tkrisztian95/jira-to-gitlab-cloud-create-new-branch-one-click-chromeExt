@@ -9,11 +9,7 @@ The extension makes it easier to create new branches on GitLab directly from Jir
 ![Screenshot1](screenshots/Capture9.PNG)
 
 ### How to configure
-To reveal the extension settings simply click on the extension icon in the extensions toolbar.
-![Screenshot2](screenshots/Capture6.png)
-
-On the popup you have to set the access token and the project id.
-![Screenshot3](screenshots/Capture7.png)
+To reveal the extension settings simply click on the extension icon in the extensions toolbar. On the popup you have to set the access token and the project id from GitLab.
 
 #### 1. Generate access token
 In order to get access to the GitLab APIs you must create an access token first in your profile with allowing the api usage (only). Then you should copy the generated key.
