@@ -9,7 +9,7 @@ For perfoming the create branch action the extension uses the GitLab APIs. See t
 If the branch created successfully then a success notif should popup. If something went wrong you will see browser alerts.
 
 ### Add to your Chrome
-//TODO: Here comes the chromeStore link
+<a target="_blank" href="https://chrome.google.com/webstore/detail/jira-gitlab-integration-n/ccoandmmhdbepejjfhlimekeeamdkgkj">![Try it now in CWS](https://raw.github.com/GoogleChrome/chrome-app-samples/master/tryitnowbutton.png "Click here to install this from the Chrome Web Store")</a>
 
 ### How to configure
 To reveal the extension settings simply click on the extension icon in the extensions toolbar. On the popup you have to set the access token and the project id from GitLab.
